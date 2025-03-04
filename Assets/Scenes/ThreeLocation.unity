@@ -1756,9 +1756,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 100
+  m_MaxValue: 20
   m_WholeNumbers: 0
-  m_Value: 100
+  m_Value: 20
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2706,8 +2706,8 @@ GameObject:
   - component: {fileID: 1487757034}
   - component: {fileID: 1487757033}
   - component: {fileID: 1487757032}
-  - component: {fileID: 1487757039}
   - component: {fileID: 1487757037}
+  - component: {fileID: 1487757038}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2830,7 +2830,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1487757039
+--- !u!114 &1487757038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2839,16 +2839,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1487757031}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daff3559d82ef7b43bda8726321a8f66, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fbc093aa5ea7c443af87370278515e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 5
-  runSpeed: 10
-  stamina: 100
-  staminaDrainRate: 10
-  staminaRecoveryRate: 5
-  minStaminaToRun: 10
-  staminaSlider: {fileID: 1076680525}
+  controller: {fileID: 1487757037}
+  speed: 2.4
+  runSpeed: 4.8
+  gravity: -9.81
+  jumpHeight: 3
+  stamina: 10
+  staminaDrain: 1
+  staminaRegen: 0.5
+  staminaBar: {fileID: 1610540541}
 --- !u!1 &1490898608
 GameObject:
   m_ObjectHideFlags: 0
@@ -3536,6 +3538,7 @@ GameObject:
   - component: {fileID: 2083993833}
   - component: {fileID: 2083993835}
   - component: {fileID: 2083993834}
+  - component: {fileID: 2083993836}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -3617,6 +3620,25 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &2083993836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083993832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4364dfd0f0c66034da6078739dd13a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sensitivity: 2
+  maxYAngle: 80
+  fovSensitivity: 5
+  playerCamera: {fileID: 2083993835}
+  forwardOffset: 0.5
+  sideTiltAmount: 2
+  runTiltAmount: 4
 --- !u!1 &2086673210
 GameObject:
   m_ObjectHideFlags: 0
