@@ -1,102 +1,157 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Movement Settings")]
     [SerializeField] private CharacterController controller;
-    [SerializeField] private float speed = 2.4f; // Уменьшенная скорость обычной ходьбы
-    [SerializeField] private float runSpeed = 4.8f; // Уменьшенная скорость бега
+    [SerializeField] private float speed = 2.4f;
+    [SerializeField] private float runSpeed = 4.8f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float jumpHeight = 3f;
 
-    [SerializeField] private float stamina = 10f; // Уменьшенная максимальная выносливость
-    [SerializeField] private float staminaDrain = 1f; // Уменьшенный расход выносливости при беге
-    [SerializeField] private float staminaRegen = 0.5f; // Уменьшенное восстановление выносливости в секунду
+    [Header("Stamina Settings")]
+    [SerializeField] private float stamina = 10f;
+    [SerializeField] private float staminaDrain = 1f;
+    [SerializeField] private float staminaRegen = 0.5f;
+    [SerializeField] private Slider staminaBar;
 
-    [SerializeField] private UnityEngine.UI.Image staminaBar; // Ссылка на UI элемент для отображения выносливости
+    [Header("Particle Settings")]
+    [SerializeField] private ParticleSystem runParticles;
+    [SerializeField] private RectTransform particleAnchor;
 
     private Vector3 velocity;
     private bool isGrounded;
     private bool isRunning;
-
+    private float lastStaminaUseTime;
+    private Vector3[] worldCorners = new Vector3[4];
+    private Camera mainCamera;
     private Color originalStaminaColor;
-    private float alpha = 1f; // Альфа-канал для эффекта мигания
 
     private void Start()
     {
-        originalStaminaColor = staminaBar.color; // Сохраняем оригинальный цвет
+        mainCamera = Camera.main;
+        originalStaminaColor = staminaBar.fillRect.GetComponent<Image>().color;
+        staminaBar.maxValue = stamina;
+        staminaBar.value = stamina;
+
+        if (runParticles != null)
+        {
+            var main = runParticles.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            runParticles.Stop();
+        }
     }
 
     private void Update()
     {
-        // Обработка скрытия/показ курсора
-        if (Input.GetKey(KeyCode.LeftAlt))
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
+        HandleCursor();
+        HandleMovement();
+        HandleStamina();
+        UpdateParticlesPosition();
+        HandleParticles();
+        UpdateStaminaUI();
+    }
 
+    private void HandleCursor()
+    {
+        Cursor.lockState = Input.GetKey(KeyCode.LeftAlt) 
+            ? CursorLockMode.None 
+            : CursorLockMode.Locked;
+        Cursor.visible = Input.GetKey(KeyCode.LeftAlt);
+    }
+
+    private void HandleMovement()
+    {
         isGrounded = controller.isGrounded;
+        if (isGrounded && velocity.y < 0) velocity.y = -2f;
 
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f; // Убедимся, что игрок "прилипает" к земле
-        }
+        Vector3 move = transform.forward * Input.GetAxis("Vertical") 
+                      + transform.right * Input.GetAxis("Horizontal");
+        
+        controller.Move(move * (isRunning ? runSpeed : speed) * Time.deltaTime);
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+    }
 
-        // Движение вперед/назад
-        float moveZ = Input.GetAxis("Vertical");
-        float moveX = Input.GetAxis("Horizontal"); // Добавлено для бокового движения
-        Vector3 move = transform.forward * moveZ + transform.right * moveX; // Теперь учитываем движение по X
+    private void HandleStamina()
+    {
+        bool isMoving = Input.GetAxis("Vertical") != 0 
+                     || Input.GetAxis("Horizontal") != 0;
+        bool shouldDrain = Input.GetKey(KeyCode.LeftShift) && isMoving;
 
-        // Проверяем, удерживается ли Shift для бега
-        if (Input.GetKey(KeyCode.LeftShift) && stamina > 0)
+        if (shouldDrain && stamina > 0)
         {
             isRunning = true;
-            stamina -= staminaDrain * Time.deltaTime; // Расходуем выносливость
-            stamina = Mathf.Max(stamina, 0); // Не допускаем отрицательных значений
+            stamina -= staminaDrain * Time.deltaTime;
+            lastStaminaUseTime = Time.time;
         }
         else
         {
             isRunning = false;
-            if (stamina < 10)
-            {
-                StartCoroutine(StaminaBlink()); // Запускаем мигание, если выносливость низкая
-            }
-            if (stamina < 10)
-            {
-                stamina += staminaRegen * Time.deltaTime; // Восстанавливаем выносливость
-            }
+            if (Time.time - lastStaminaUseTime >= 5f && stamina < 10)
+                stamina += staminaRegen * Time.deltaTime;
         }
 
-        float currentSpeed = isRunning ? runSpeed : speed;
-        controller.Move(move * currentSpeed * Time.deltaTime);
-
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        // Обновляем UI для выносливости
-        UpdateStaminaUI();
+        stamina = Mathf.Clamp(stamina, 0, 10);
     }
 
-    private IEnumerator StaminaBlink()
+private void UpdateParticlesPosition()
+{
+    // Добавляем проверки всех возможных null-ссылок
+    if (particleAnchor == null || runParticles == null || mainCamera == null)
     {
-        while (stamina < 2)
+        // Добавляем лог для диагностики
+        Debug.LogError($"Missing references: " +
+            $"particleAnchor={particleAnchor}, " +
+            $"runParticles={runParticles}, " +
+            $"mainCamera={mainCamera}");
+        return;
+    }
+
+    try
+    {
+        // Получаем углы UI-элемента
+        particleAnchor.GetWorldCorners(worldCorners);
+        
+        // Вычисляем центр
+        Vector3 centerPos = (worldCorners[0] + worldCorners[2]) * 0.5f;
+        
+        // Конвертируем позицию
+        Vector3 screenPos = mainCamera.WorldToScreenPoint(centerPos);
+        Vector3 worldPosition = mainCamera.ScreenToWorldPoint(
+            new Vector3(
+                screenPos.x, 
+                screenPos.y, 
+                mainCamera.nearClipPlane + 0.5f // Оптимальная дистанция
+            )
+        );
+        
+        // Применяем позицию
+        runParticles.transform.position = worldPosition;
+    }
+    catch (System.Exception e)
+    {
+        Debug.LogError($"Particle position error: {e.Message}");
+    }
+}
+
+    private void HandleParticles()
+    {
+        if (runParticles == null) return;
+
+        if (isRunning)
         {
-            alpha = Mathf.PingPong(Time.time, 1); // Создаем эффект мигания
-            staminaBar.color = new Color(originalStaminaColor.r, originalStaminaColor.g, originalStaminaColor.b, alpha);
-            yield return null; // Ждем следующего кадра
+            if (!runParticles.isPlaying) runParticles.Play();
         }
-        staminaBar.color = originalStaminaColor; // Возвращаем оригинальный цвет после завершения мигания
+        else
+        {
+            if (runParticles.isPlaying) runParticles.Stop();
+        }
     }
 
     private void UpdateStaminaUI()
     {
-        staminaBar.fillAmount = stamina / 10f; // Обновляем заполнение UI элемента
+        staminaBar.value = stamina;
     }
 }
