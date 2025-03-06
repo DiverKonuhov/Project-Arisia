@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4688739215552431862
+--- !u!1 &3719810318090610341
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,12 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1592064371518103238}
-  - component: {fileID: 1220692026305630584}
-  - component: {fileID: 3009663566210855509}
-  - component: {fileID: 3676641039322925404}
-  - component: {fileID: 2144244501422985034}
-  - component: {fileID: 8963525465244816293}
+  - component: {fileID: 1423719650538342021}
+  - component: {fileID: 4708632402434929485}
+  - component: {fileID: 5528791275221974533}
+  - component: {fileID: 8037822594655003038}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -21,36 +19,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1592064371518103238
+--- !u!4 &1423719650538342021
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4688739215552431862}
+  m_GameObject: {fileID: 3719810318090610341}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 63.85456, y: 14.60861, z: 26.703714}
+  m_LocalPosition: {x: 136.1927, y: 25.247622, z: 103.40676}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1220692026305630584
+--- !u!33 &4708632402434929485
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4688739215552431862}
+  m_GameObject: {fileID: 3719810318090610341}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &3009663566210855509
+--- !u!23 &5528791275221974533
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4688739215552431862}
+  m_GameObject: {fileID: 3719810318090610341}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -86,13 +84,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &3676641039322925404
+--- !u!135 &8037822594655003038
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4688739215552431862}
+  m_GameObject: {fileID: 3719810318090610341}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -107,39 +105,3 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2144244501422985034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4688739215552431862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74e553c1b2f3b2941985df40eddb0bf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTerrain: {fileID: 0}
-  treePrototypeIndex: 0
-  heightOffset: 0.5
-  decorPrefab: {fileID: 919132149155446097, guid: 4155edc1e190bd141ba1953e48283b4c, type: 3}
-  alwaysShowSphere: 1
-  viewAngle: 140
-  checkDistance: 40
-  treeNameFilter: Decor
-  liveUpdate: 1
---- !u!114 &8963525465244816293
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4688739215552431862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6f9ec922a778c749a004657a728734c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  decor: {fileID: 919132149155446097, guid: 4155edc1e190bd141ba1953e48283b4c, type: 3}
-  sphereRenderer: {fileID: 3009663566210855509}
-  updateInterval: 0.2
