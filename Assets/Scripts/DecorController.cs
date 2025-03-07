@@ -1,43 +1,35 @@
-// DecorController.cs
 using UnityEngine;
 using System.Collections;
 
 public class DecorController : MonoBehaviour
 {
-    [SerializeField] private GameObject decorInstance;
-    [SerializeField] private Renderer debugSphere;
-
     private TerrainDecorSystem system;
     private Transform mainCamera;
-    private Vector3 initialDecorPosition;
-    private bool isVisible;
+    private GameObject decorInstance;
+    private GameObject debugSphere;
 
-    public void Initialize(TerrainDecorSystem system)
+    public void Initialize(TerrainDecorSystem system, GameObject prefab)
     {
         this.system = system;
-        
-        // Create decor
-        if (system.decorPrefab)
-        {
-            decorInstance = Instantiate(system.decorPrefab, transform);
-            decorInstance.SetActive(false);
-            initialDecorPosition = decorInstance.transform.localPosition - Vector3.up * 2f;
-            decorInstance.transform.localPosition = initialDecorPosition;
-        }
+        CreateVisuals(prefab);
+        StartCoroutine(VisibilityCheck());
+    }
 
-        // Create debug sphere
-        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.transform.SetParent(transform);
-        sphere.transform.localPosition = Vector3.zero;
-        sphere.transform.localScale = Vector3.one * 0.3f;
-        debugSphere = sphere.GetComponent<Renderer>();
-        debugSphere.enabled = system.showDebugSpheres;
-        
-        // Proper destruction method
-        if (Application.isPlaying) Destroy(sphere.GetComponent<Collider>());
-        else DestroyImmediate(sphere.GetComponent<Collider>());
+    void CreateVisuals(GameObject prefab)
+    {
+        // Создаем префаб декора
+        decorInstance = Instantiate(prefab, transform.position, Quaternion.identity, transform);
+        decorInstance.SetActive(false);
 
-        if (Application.isPlaying) StartCoroutine(VisibilityCheck());
+        // Создаем дебаг сферу только в редакторе
+        #if UNITY_EDITOR
+        debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        debugSphere.transform.SetParent(transform);
+        debugSphere.transform.localPosition = Vector3.zero;
+        debugSphere.transform.localScale = Vector3.one * 0.5f;
+        debugSphere.GetComponent<Renderer>().material.color = Color.red;
+        debugSphere.SetActive(!Application.isPlaying);
+        #endif
     }
 
     IEnumerator VisibilityCheck()
@@ -46,8 +38,7 @@ public class DecorController : MonoBehaviour
         {
             if (!mainCamera) mainCamera = Camera.main.transform;
             if (mainCamera) UpdateVisibility();
-            
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -59,40 +50,13 @@ public class DecorController : MonoBehaviour
         float distance = toDecor.magnitude;
         float angle = Vector3.Angle(mainCamera.forward, toDecor.normalized);
 
-        bool shouldShow = angle < system.viewAngle/2 && 
-                        distance < system.viewDistance && 
-                        distance > 0.5f;
+        bool shouldShow = angle < system.viewAngle / 2 && 
+                        distance < system.viewDistance;
 
-        if (shouldShow != isVisible)
-        {
-            isVisible = shouldShow;
-            debugSphere.enabled = system.showDebugSpheres && !isVisible;
-            
-            StopAllCoroutines();
-            StartCoroutine(AnimateDecor(isVisible, distance));
-        }
-    }
+        decorInstance.SetActive(shouldShow);
 
-    IEnumerator AnimateDecor(bool show, float currentDistance)
-    {
-        Vector3 startPos = decorInstance.transform.localPosition;
-        Vector3 targetPos = show ? Vector3.zero : initialDecorPosition;
-        
-        bool useAnimation = currentDistance > system.animationStartDistance;
-        float duration = useAnimation ? system.appearDuration : 0f;
-
-        decorInstance.SetActive(true);
-
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            float t = system.appearCurve.Evaluate(elapsed / duration);
-            decorInstance.transform.localPosition = Vector3.Lerp(startPos, targetPos, t);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        decorInstance.transform.localPosition = targetPos;
-        decorInstance.SetActive(show);
+        #if UNITY_EDITOR
+        if (debugSphere) debugSphere.SetActive(!shouldShow && !Application.isPlaying);
+        #endif
     }
 }
