@@ -17,12 +17,21 @@ public class PauseMenu : MonoBehaviour
     {
         // Запоминаем начальную позицию
         hiddenPosition = pauseBoard.anchoredPosition;
-        
+
         // Рассчитываем позицию при паузе
         targetPosition = hiddenPosition + new Vector2(0, 600f);
-        
+
         // Настраиваем кнопку
         pauseButton.onClick.AddListener(TogglePause);
+    }
+
+    void Update()
+    {
+        // Проверяем нажатие клавиши Escape
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
     }
 
     void TogglePause()
@@ -37,8 +46,8 @@ public class PauseMenu : MonoBehaviour
         Vector2 endPos = isPaused ? targetPosition : hiddenPosition;
 
         float progress = 0;
-        
-        while(progress < 1f)
+
+        while (progress < 1f)
         {
             progress += Time.deltaTime * moveSpeed;
             pauseBoard.anchoredPosition = Vector2.Lerp(startPos, endPos, progress);
