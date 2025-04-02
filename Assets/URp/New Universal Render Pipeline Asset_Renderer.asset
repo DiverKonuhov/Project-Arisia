@@ -16,8 +16,8 @@ MonoBehaviour:
   m_Settings:
     AOMethod: 0
     Downsample: 0
-    AfterOpaque: 0
-    Source: 1
+    AfterOpaque: 1
+    Source: 0
     NormalSamples: 1
     Intensity: 0.44
     DirectLightingStrength: 0
@@ -53,7 +53,7 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -8200526753283583471}
   m_RendererFeatureMap: 11d271bb5de0318e
-  m_UseNativeRenderPass: 0
+  m_UseNativeRenderPass: 1
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
@@ -87,7 +87,7 @@ MonoBehaviour:
     zFailOperation: 0
   m_ShadowTransparentReceive: 1
   m_RenderingMode: 0
-  m_DepthPrimingMode: 0
+  m_DepthPrimingMode: 1
   m_CopyDepthMode: 1
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
