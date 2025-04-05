@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ThreeLocation.unity
     guid: 4f630b9c1b9e80f47b5691d016586a5b
+  - enabled: 1
+    path: Assets/Scenes/Fort.unity
+    guid: 3c1725fc7ff845f4c8149b229c198696
   m_configObjects: {}
