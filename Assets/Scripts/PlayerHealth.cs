@@ -1,36 +1,42 @@
+// PlayerHealth.cs
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHealth = 100;
-    public int currentHealth;
-    public Slider healthBar; // Сюда добавь Slider из UI
-
+    public Slider healthBar;
+    
+    private int currentHealth;
+    
     void Start()
     {
-        currentHealth = maxHealth;
+        currentHealth = HealthManager.Instance.playerMaxHealth;
         UpdateHealthBar();
     }
-
+    
     public void TakeDamage(int damage)
     {
         currentHealth = Mathf.Max(0, currentHealth - damage);
         Debug.Log($"Player took {damage} damage! Health: {currentHealth}");
         UpdateHealthBar();
-
+        
         if (currentHealth <= 0) Die();
     }
-
+    
     void UpdateHealthBar()
     {
         if (healthBar != null)
-            healthBar.value = (float)currentHealth / maxHealth;
+            healthBar.value = (float)currentHealth / HealthManager.Instance.playerMaxHealth;
     }
-
+    
     void Die()
     {
         Debug.Log("Player died!");
-        // Здесь можешь добавить свою логику смерти
+        HealthManager.Instance.PlayerDied();
+    }
+    
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
     }
 }
