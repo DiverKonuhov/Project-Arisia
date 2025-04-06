@@ -17,14 +17,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Slider staminaBar;
 
     [Header("Particle Settings")]
-    [SerializeField] private ParticleSystem runParticles;
-    [SerializeField] private RectTransform particleAnchor;
+    //[SerializeField] private ParticleSystem runParticles;
+    //[SerializeField] private RectTransform particleAnchor;
 
     private Vector3 velocity;
     private bool isGrounded;
     private bool isRunning;
     private float lastStaminaUseTime;
-    private Vector3[] worldCorners = new Vector3[4];
+    //private Vector3[] worldCorners = new Vector3[4];
     private Camera mainCamera;
     private Color originalStaminaColor;
 
@@ -35,12 +35,12 @@ public class PlayerController : MonoBehaviour
         staminaBar.maxValue = stamina;
         staminaBar.value = stamina;
 
-        if (runParticles != null)
+        /*if (runParticles != null)
         {
             var main = runParticles.main;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             runParticles.Stop();
-        }
+        }*/
     }
 
     private void Update()
@@ -48,8 +48,8 @@ public class PlayerController : MonoBehaviour
         HandleCursor();
         HandleMovement();
         HandleStamina();
-        UpdateParticlesPosition();
-        HandleParticles();
+        //UpdateParticlesPosition();
+        //HandleParticles();
         UpdateStaminaUI();
     }
 
@@ -96,47 +96,41 @@ public class PlayerController : MonoBehaviour
         stamina = Mathf.Clamp(stamina, 0, 10);
     }
 
-private void UpdateParticlesPosition()
-{
-    // Добавляем проверки всех возможных null-ссылок
-    if (particleAnchor == null || runParticles == null || mainCamera == null)
+    /*private void UpdateParticlesPosition()
     {
-        // Добавляем лог для диагностики
-        Debug.LogError($"Missing references: " +
-            $"particleAnchor={particleAnchor}, " +
-            $"runParticles={runParticles}, " +
-            $"mainCamera={mainCamera}");
-        return;
-    }
+        if (particleAnchor == null || runParticles == null || mainCamera == null)
+        {
+            Debug.LogError($"Missing references: " +
+                $"particleAnchor={particleAnchor}, " +
+                $"runParticles={runParticles}, " +
+                $"mainCamera={mainCamera}");
+            return;
+        }
 
-    try
-    {
-        // Получаем углы UI-элемента
-        particleAnchor.GetWorldCorners(worldCorners);
-        
-        // Вычисляем центр
-        Vector3 centerPos = (worldCorners[0] + worldCorners[2]) * 0.5f;
-        
-        // Конвертируем позицию
-        Vector3 screenPos = mainCamera.WorldToScreenPoint(centerPos);
-        Vector3 worldPosition = mainCamera.ScreenToWorldPoint(
-            new Vector3(
-                screenPos.x, 
-                screenPos.y, 
-                mainCamera.nearClipPlane + 0.5f // Оптимальная дистанция
-            )
-        );
-        
-        // Применяем позицию
-        runParticles.transform.position = worldPosition;
-    }
-    catch (System.Exception e)
-    {
-        Debug.LogError($"Particle position error: {e.Message}");
-    }
-}
+        try
+        {
+            particleAnchor.GetWorldCorners(worldCorners);
+            
+            Vector3 centerPos = (worldCorners[0] + worldCorners[2]) * 0.5f;
+            
+            Vector3 screenPos = mainCamera.WorldToScreenPoint(centerPos);
+            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(
+                new Vector3(
+                    screenPos.x, 
+                    screenPos.y, 
+                    mainCamera.nearClipPlane + 0.5f
+                )
+            );
+            
+            runParticles.transform.position = worldPosition;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Particle position error: {e.Message}");
+        }
+    }*/
 
-    private void HandleParticles()
+    /*private void HandleParticles()
     {
         if (runParticles == null) return;
 
@@ -148,7 +142,7 @@ private void UpdateParticlesPosition()
         {
             if (runParticles.isPlaying) runParticles.Stop();
         }
-    }
+    }*/
 
     private void UpdateStaminaUI()
     {
