@@ -10,7 +10,7 @@ Material:
   m_Name: Wall
   m_Shader: {fileID: 4800000, guid: ee7e4c9a5f6364b688a332c67fc32cca, type: 3}
   m_Parent: {fileID: 2100000, guid: 4cca9b3a7f36f37439507478a0ba5dd7, type: 2}
-  m_ModifiedSerializedProperties: 16
+  m_ModifiedSerializedProperties: 20
   m_ValidKeywords:
   - _CLEARCOATMAP
   - _DETAIL_SCALED
@@ -32,7 +32,7 @@ Material:
     m_TexEnvs:
     - _BaseMap:
         m_Texture: {fileID: 2800000, guid: 761e269be0278dc4990e626fa8da78c3, type: 3}
-        m_Scale: {x: 1.5, y: 1.5}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 52fd405ff0815ee4fbef8c6fc7e232e6, type: 3}
@@ -43,9 +43,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
-        m_Texture: {fileID: 2800000, guid: 9c62fbde16f92904ba6ce3177d8dac8b, type: 3}
-        m_Scale: {x: 0, y: 0}
-        m_Offset: {x: 0, y: 0}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 1, y: 1}
     - _DetailNormalMap:
         m_Texture: {fileID: 2800000, guid: 2de510950cce56c46a26603f5bba55d8, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -68,14 +68,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BumpScale: 5
-    - _ClearCoatMask: 0.479
+    - _BumpScale: 10
+    - _ClearCoatMask: 0.421
     - _Cutoff: 1
     - _DetailAlbedoMapScale: 2
+    - _EnvironmentReflections: 1
     - _Metallic: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _SpecularHighlights: 1
     m_Colors:
-    - _SpecColor: {r: 0, g: 0, b: 0, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecColor: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &3308756570373528075
 MonoBehaviour:
