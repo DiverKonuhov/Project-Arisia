@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class SpiderAI : MonoBehaviour
@@ -11,13 +12,15 @@ public class SpiderAI : MonoBehaviour
     public float detectionRange = 8f;
 
     [Header("Attack Settings")]
-    public string damageType = "melee";
-    public int baseDamage = 10;
     public float attackCooldown = 2f;
     public float attackRange = 1.5f;
+    public SpiderWeapon spiderWeapon;
 
-    [Header("References")]
-    public Transform weaponPoint;
+    [Header("Health Settings")]
+    public string spiderId = "spider";
+    public Slider healthBar;
+
+    [Header("Effects")]
     public GameObject deathEffect;
 
     private NavMeshAgent agent;
@@ -29,9 +32,34 @@ public class SpiderAI : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        spiderWeapon = GetComponentInChildren<SpiderWeapon>();
         spawnPoint = transform.position;
-        player = GameObject.FindWithTag("Player").transform;
-        agent.speed = patrolSpeed;
+        player = GameObject.FindWithTag("Player")?.transform; // Добавлена проверка null
+        
+        if (agent != null)
+        {
+            agent.speed = patrolSpeed;
+        }
+
+        // Защищенная инициализация здоровья
+        if (HealthManager.Instance != null)
+        {
+            HealthManager.Instance.RegisterHealth(spiderId, healthBar);
+            var healthData = HealthManager.Instance.GetHealthData(spiderId);
+            if (healthData != null)
+            {
+                healthData.onDeathEvent.AddListener(Die);
+            }
+            else
+            {
+                Debug.LogError($"Failed to get health data for {spiderId}");
+            }
+        }
+        else
+        {
+            Debug.LogError("HealthManager.Instance is null!");
+        }
+
         SetRandomDestination();
     }
 
@@ -48,7 +76,8 @@ public class SpiderAI : MonoBehaviour
 
             if (distanceToPlayer <= attackRange && Time.time - lastAttackTime >= attackCooldown)
             {
-                Attack();
+                lastAttackTime = Time.time;
+                spiderWeapon.Attack();
             }
         }
         else if (agent.remainingDistance < 0.5f)
@@ -57,13 +86,7 @@ public class SpiderAI : MonoBehaviour
         }
     }
 
-    void Attack()
-    {
-        lastAttackTime = Time.time;
-        DamageManager.Instance.ApplyDamage("player", damageType, baseDamage);
-    }
-
-    void SetRandomDestination()
+    private void SetRandomDestination()
     {
         Vector3 randomPoint = spawnPoint + Random.insideUnitSphere * patrolRadius;
         NavMeshHit hit;
@@ -76,22 +99,33 @@ public class SpiderAI : MonoBehaviour
     public void TakeDamage(int damageAmount)
     {
         if (isDead) return;
-        DamageManager.Instance.ApplyDamage("spider", "melee", damageAmount);
+        
+        HealthManager.Instance.TakeDamage(spiderId, damageAmount);
+        
+        // Исправленный вызов метода
+        var healthData = HealthManager.Instance.GetHealthData(spiderId);
+        if (healthData != null && healthData.currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
-    void Die()
+    public void Die()
     {
+        if (isDead || this == null) return;
+        
         isDead = true;
-        agent.isStopped = true;
-        if (deathEffect != null) Instantiate(deathEffect, transform.position, Quaternion.identity);
-        Destroy(gameObject, 0.5f);
-    }
+        
+        if (agent != null)
+        {
+            agent.isStopped = true;
+        }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        if (deathEffect != null)
+        {
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
+        }
+        
+        Destroy(gameObject, 0.5f);
     }
 }

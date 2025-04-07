@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI; // Добавьте эту строку для работы с Slider
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class HealthManager : MonoBehaviour
 {
@@ -10,15 +10,17 @@ public class HealthManager : MonoBehaviour
     [System.Serializable]
     public class HealthData
     {
-        public string id; // "player", "spider", "boss"
-        public int maxHealth;
+        public string id;
+        public int maxHealth = 100;
         [HideInInspector] public int currentHealth;
-        public Slider healthBar; // Теперь будет работать
+        public Slider healthBar;
         public UnityEvent onDeathEvent;
     }
 
-    [Header("Health Settings")]
-    public HealthData[] healthSettings;
+    [Header("Base Health Settings")]
+    public HealthData[] baseHealthSettings;
+
+    private Dictionary<string, HealthData> healthRegistry = new Dictionary<string, HealthData>();
 
     private void Awake()
     {
@@ -26,7 +28,7 @@ public class HealthManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            InitializeHealth();
+            InitializeBaseHealth();
         }
         else
         {
@@ -34,26 +36,64 @@ public class HealthManager : MonoBehaviour
         }
     }
 
-    private void InitializeHealth()
+
+    private void InitializeBaseHealth()
     {
-        foreach (var setting in healthSettings)
+        foreach (var setting in baseHealthSettings)
         {
-            setting.currentHealth = setting.maxHealth;
-            UpdateHealthUI(setting);
+            RegisterHealth(setting.id, setting.healthBar, setting.maxHealth);
+            
+            // Здесь можно настроить стандартные события смерти
+            if (setting.id.Contains("spider"))
+            {
+                setting.onDeathEvent = new UnityEvent();
+            }
         }
     }
 
+public void RegisterHealth(string id, Slider healthBar = null, int maxHealth = 100)
+{
+    if (healthRegistry == null)
+    {
+        healthRegistry = new Dictionary<string, HealthData>();
+    }
+
+    if (!healthRegistry.ContainsKey(id))
+    {
+        var newData = new HealthData()
+        {
+            id = id,
+            maxHealth = maxHealth,
+            currentHealth = maxHealth,
+            healthBar = healthBar
+        };
+        
+        healthRegistry[id] = newData;
+        UpdateHealthUI(newData);
+        
+        // Автоматически добавляем событие смерти для пауков
+        if (id.Contains("spider"))
+        {
+            newData.onDeathEvent = new UnityEvent();
+        }
+    }
+}
+
     public void TakeDamage(string targetId, int damage)
     {
-        HealthData target = System.Array.Find(healthSettings, x => x.id == targetId);
-        if (target == null) return;
+        if (!healthRegistry.ContainsKey(targetId))
+        {
+            Debug.LogWarning($"Health ID {targetId} not registered!");
+            return;
+        }
 
+        HealthData target = healthRegistry[targetId];
         target.currentHealth = Mathf.Max(0, target.currentHealth - damage);
         UpdateHealthUI(target);
 
         if (target.currentHealth <= 0)
         {
-            target.onDeathEvent.Invoke();
+            target.onDeathEvent?.Invoke();
         }
     }
 
@@ -65,8 +105,10 @@ public class HealthManager : MonoBehaviour
             data.healthBar.value = data.currentHealth;
         }
     }
+
     public HealthData GetHealthData(string id)
     {
-        return System.Array.Find(healthSettings, x => x.id == id);
+        return healthRegistry.ContainsKey(id) ? healthRegistry[id] : null;
     }
+    
 }
