@@ -4,19 +4,20 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class SpiderAI : MonoBehaviour
 {
-    [Header("Movement")]
+    [Header("Movement Settings")]
     public float patrolSpeed = 1.5f;
     public float chaseSpeed = 3.5f;
     public float patrolRadius = 10f;
     public float detectionRange = 8f;
 
-    [Header("Attack")]
-    public int damage = 10;
+    [Header("Attack Settings")]
+    public string damageType = "melee";
+    public int baseDamage = 10;
     public float attackCooldown = 2f;
     public float attackRange = 1.5f;
 
     [Header("References")]
-    public Transform weaponPoint; // Точка крепления оружия
+    public Transform weaponPoint;
     public GameObject deathEffect;
 
     private NavMeshAgent agent;
@@ -30,20 +31,16 @@ public class SpiderAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         spawnPoint = transform.position;
         player = GameObject.FindWithTag("Player").transform;
-
         agent.speed = patrolSpeed;
         SetRandomDestination();
     }
 
     void Update()
     {
-        if (isDead) return;
-
-        if (player == null) return;
+        if (isDead || player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Режим преследования
         if (distanceToPlayer <= detectionRange)
         {
             agent.speed = chaseSpeed;
@@ -54,7 +51,6 @@ public class SpiderAI : MonoBehaviour
                 Attack();
             }
         }
-        // Режим патрулирования
         else if (agent.remainingDistance < 0.5f)
         {
             SetRandomDestination();
@@ -64,7 +60,7 @@ public class SpiderAI : MonoBehaviour
     void Attack()
     {
         lastAttackTime = Time.time;
-        DamageManager.Instance.ApplyDamage("player", "melee", damage);
+        DamageManager.Instance.ApplyDamage("player", damageType, baseDamage);
     }
 
     void SetRandomDestination()
@@ -80,26 +76,15 @@ public class SpiderAI : MonoBehaviour
     public void TakeDamage(int damageAmount)
     {
         if (isDead) return;
-
-        HealthManager.Instance.TakeDamage("spider", damageAmount);
-
-        if (HealthManager.Instance.GetHealthData("spider").currentHealth <= 0)
-        {
-            Die();
-        }
+        DamageManager.Instance.ApplyDamage("spider", "melee", damageAmount);
     }
 
     void Die()
     {
         isDead = true;
         agent.isStopped = true;
-
-        if (deathEffect != null)
-        {
-            Instantiate(deathEffect, transform.position, Quaternion.identity);
-        }
-
-        Destroy(gameObject, 0.5f); // Задержка для проигрывания анимации
+        if (deathEffect != null) Instantiate(deathEffect, transform.position, Quaternion.identity);
+        Destroy(gameObject, 0.5f);
     }
 
     void OnDrawGizmosSelected()

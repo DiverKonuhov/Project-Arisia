@@ -8,25 +8,42 @@ public class DamageManager : MonoBehaviour
     [System.Serializable]
     public class DamageType
     {
-        public string id; // "melee", "fire", "poison"
-        public float multiplier = 1f; // Модификатор урона
-        public Color damageColor = Color.red; // Для визуальных эффектов
+        public string id;
+        public float multiplier = 1f;
+        public Color damageColor = Color.red;
     }
 
     [System.Serializable]
     public class EntityDamageSettings
     {
-        public string entityId; // Соответствует ID из HealthManager
-        public List<string> vulnerableTo; // Типы урона, к которым уязвим
-        public List<string> resistantTo; // Типы урона, к которым устойчив
-        public List<string> immuneTo; // Типы урона, которые игнорируются
+        public string entityId;
+        public List<string> vulnerableTo = new List<string>();
+        public List<string> resistantTo = new List<string>();
+        public List<string> immuneTo = new List<string>();
     }
 
-    [Header("Настройки типов урона")]
-    public DamageType[] damageTypes;
+    [Header("Damage Types")]
+    public DamageType[] damageTypes = {
+        new DamageType { id = "melee", multiplier = 1f, damageColor = Color.red },
+        new DamageType { id = "fire", multiplier = 1.2f, damageColor = new Color(1, 0.5f, 0) },
+        new DamageType { id = "poison", multiplier = 0.8f, damageColor = Color.green }
+    };
 
-    [Header("Настройки сущностей")]
-    public EntityDamageSettings[] entitiesSettings;
+    [Header("Entity Settings")]
+    public EntityDamageSettings spiderSettings = new EntityDamageSettings 
+    { 
+        entityId = "spider",
+        vulnerableTo = new List<string> { "fire" },
+        resistantTo = new List<string> { "poison" }
+    };
+
+    public EntityDamageSettings playerSettings = new EntityDamageSettings
+    {
+        entityId = "player",
+        vulnerableTo = new List<string> { "poison" }
+    };
+
+    private Dictionary<string, EntityDamageSettings> entitySettingsDict;
 
     private void Awake()
     {
@@ -34,6 +51,7 @@ public class DamageManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            InitializeSettings();
         }
         else
         {
@@ -41,45 +59,48 @@ public class DamageManager : MonoBehaviour
         }
     }
 
+    private void InitializeSettings()
+    {
+        entitySettingsDict = new Dictionary<string, EntityDamageSettings>
+        {
+            { spiderSettings.entityId, spiderSettings },
+            { playerSettings.entityId, playerSettings }
+        };
+    }
+
     public void ApplyDamage(string targetId, string damageTypeId, int baseDamage)
     {
-        // 1. Находим настройки сущности
-        EntityDamageSettings entitySettings = System.Array.Find(entitiesSettings, x => x.entityId == targetId);
-        if (entitySettings == null)
+        if (!entitySettingsDict.TryGetValue(targetId, out EntityDamageSettings entitySettings))
         {
-            Debug.LogError($"Entity with id {targetId} not found!");
+            Debug.LogError($"Entity settings for {targetId} not found!");
             return;
         }
 
-        // 2. Проверяем иммунитеты
         if (entitySettings.immuneTo.Contains(damageTypeId))
         {
-            Debug.Log($"{targetId} immune to {damageTypeId} damage!");
+            Debug.Log($"{targetId} is immune to {damageTypeId} damage");
             return;
         }
 
-        // 3. Рассчитываем итоговый урон
         DamageType dmgType = System.Array.Find(damageTypes, x => x.id == damageTypeId);
-        float finalDamage = baseDamage;
+        if (dmgType == null)
+        {
+            Debug.LogError($"Damage type {damageTypeId} not found!");
+            return;
+        }
 
-        if (entitySettings.resistantTo.Contains(damageTypeId))
-            finalDamage *= 0.5f; // Устойчивость = 50% урона
+        float damageMultiplier = 1f;
+        if (entitySettings.resistantTo.Contains(damageTypeId)) damageMultiplier *= 0.5f;
+        if (entitySettings.vulnerableTo.Contains(damageTypeId)) damageMultiplier *= 1.5f;
 
-        if (entitySettings.vulnerableTo.Contains(damageTypeId))
-            finalDamage *= 1.5f; // Уязвимость = 150% урона
-
-        finalDamage *= dmgType.multiplier;
-
-        // 4. Применяем урон через HealthManager
-        HealthManager.Instance.TakeDamage(targetId, Mathf.RoundToInt(finalDamage));
-
-        // 5. Визуальный эффект (опционально)
+        int finalDamage = Mathf.RoundToInt(baseDamage * dmgType.multiplier * damageMultiplier);
+        HealthManager.Instance.TakeDamage(targetId, finalDamage);
         ShowDamageEffect(targetId, dmgType.damageColor);
     }
 
     private void ShowDamageEffect(string targetId, Color color)
     {
-        // Здесь можно добавить логику визуальных эффектов
-        Debug.Log($"Applied damage to {targetId} with color {color}");
+        // Реализуйте визуальные эффекты здесь
+        Debug.Log($"Applied damage to {targetId} (Color: {color})");
     }
 }
