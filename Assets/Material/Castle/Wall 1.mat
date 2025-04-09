@@ -48,7 +48,7 @@ Material:
     - _ReceiveShadows: 0
     - _WorkflowMode: 0
     m_Colors:
-    - _SpecColor: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 1}
+    - _SpecColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &3308756570373528075
 MonoBehaviour:
