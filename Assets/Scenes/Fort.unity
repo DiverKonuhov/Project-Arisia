@@ -5414,6 +5414,10 @@ PrefabInstance:
       propertyPath: m_DynamicOccludee
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4176891558981687311, guid: ac1a2ea4f5f0a1643a7517066727b14c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5f2dd7e5e8bab8e419331507e4609792, type: 2}
     - target: {fileID: 4565163432261603270, guid: ac1a2ea4f5f0a1643a7517066727b14c, type: 3}
       propertyPath: m_Mesh
       value: 
