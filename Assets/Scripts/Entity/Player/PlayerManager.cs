@@ -40,5 +40,6 @@ public class PlayerManager : MonoBehaviour
     void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        
     }
 }

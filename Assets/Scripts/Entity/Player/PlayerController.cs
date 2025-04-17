@@ -45,7 +45,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        HandleCursor();
         HandleMovement();
         HandleStamina();
         //UpdateParticlesPosition();
@@ -53,13 +52,7 @@ public class PlayerController : MonoBehaviour
         UpdateStaminaUI();
     }
 
-    private void HandleCursor()
-    {
-        Cursor.lockState = Input.GetKey(KeyCode.LeftAlt) 
-            ? CursorLockMode.None 
-            : CursorLockMode.Locked;
-        Cursor.visible = Input.GetKey(KeyCode.LeftAlt);
-    }
+   
 
     private void HandleMovement()
     {
