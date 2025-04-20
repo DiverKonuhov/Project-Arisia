@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
                       + transform.right * Input.GetAxis("Horizontal");
         
         controller.Move(move * (isRunning ? runSpeed : speed) * Time.deltaTime);
-        velocity.y += gravity * Time.deltaTime;
+        velocity.y -= gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 
