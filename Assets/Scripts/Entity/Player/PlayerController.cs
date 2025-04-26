@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -52,24 +53,22 @@ public class PlayerController : MonoBehaviour
         UpdateStaminaUI();
     }
 
-   
-
     private void HandleMovement()
     {
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0) velocity.y = -2f;
 
-        Vector3 move = transform.forward * Input.GetAxis("Vertical") 
+        Vector3 move = transform.forward * Input.GetAxis("Vertical")
                       + transform.right * Input.GetAxis("Horizontal");
-        
         controller.Move(move * (isRunning ? runSpeed : speed) * Time.deltaTime);
         velocity.y -= gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+     
     }
 
     private void HandleStamina()
     {
-        bool isMoving = Input.GetAxis("Vertical") != 0 
+        bool isMoving = Input.GetAxis("Vertical") != 0
                      || Input.GetAxis("Horizontal") != 0;
         bool shouldDrain = Input.GetKey(KeyCode.LeftShift) && isMoving;
 
@@ -137,6 +136,7 @@ public class PlayerController : MonoBehaviour
         }
     }*/
 
+ 
     private void UpdateStaminaUI()
     {
         staminaBar.value = stamina;
