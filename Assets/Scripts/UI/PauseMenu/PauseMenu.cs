@@ -10,6 +10,13 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button pauseButton; // Кнопка в углу экрана
     [SerializeField] private float moveSpeed = 5f; // Скорость анимации
 
+    [Header("аудио настройки")]
+     private AudioSource AudioSo;
+    [SerializeField] private AudioClip SongOpen;
+    [SerializeField] private AudioClip SongClick;
+
+
+
     [Header("меню обьекты")]
     [SerializeField] private GameObject panelPauseMenu;
     [SerializeField] private GameObject panelSetting;
@@ -24,6 +31,7 @@ public class PauseMenu : MonoBehaviour
 
     void Start()
     {
+        AudioSo = GetComponent<AudioSource>(); 
         Cursor.visible = false;
         // Запоминаем начальную позицию
         hiddenPosition = pauseBoard.anchoredPosition;
@@ -42,6 +50,7 @@ public class PauseMenu : MonoBehaviour
             isPaused = !isPaused;
             if (isPaused)
             {
+                AudioSo.PlayOneShot(SongOpen);
                 panelPauseMenu.SetActive(isPaused);
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
@@ -61,6 +70,8 @@ public class PauseMenu : MonoBehaviour
 
    public void SettingPanel()
     {
+        AudioSo.PlayOneShot(SongClick);
+
         if (isOpenSetting)
         {
             isOpenSetting = false;
@@ -77,13 +88,13 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1;
         isOpenSetting = false;
         panelPauseMenu.SetActive(false);
-
     }
 
     public void ContinumBatton()
     {
         Time.timeScale = 1;
         MenuPanel();
+        AudioSo.PlayOneShot(SongClick);
     }
     public void Exit()
     {

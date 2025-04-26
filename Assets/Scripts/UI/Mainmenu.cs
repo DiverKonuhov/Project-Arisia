@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Mainmenu : MonoBehaviour
 {
@@ -9,6 +10,17 @@ public class Mainmenu : MonoBehaviour
     private bool IsSetting;
     private bool IsCrteate;
 
+
+    private AudioSource AudioSo;
+    [SerializeField] private AudioClip SongClick;
+
+    private void Start()
+    {
+        AudioSo = GetComponent<AudioSource>();
+
+    }
+
+
     private void Update()
     {
         PanelSettng.SetActive(IsSetting);
@@ -16,9 +28,21 @@ public class Mainmenu : MonoBehaviour
 
     }
 
+    public void LoadSceneWithName(string sceneName)
+    {
+        AudioSo.PlayOneShot(SongClick);
+        SceneManager.LoadScene(sceneName);
+    }
+    public void Exit()
+    {
+        AudioSo.PlayOneShot(SongClick);
+        Application.Quit();
+    }
+
 
     public void setting()
     {
+        AudioSo.PlayOneShot(SongClick);
 
         if (!IsSetting)
         {
@@ -36,6 +60,7 @@ public class Mainmenu : MonoBehaviour
 
     public void create()
     {
+        AudioSo.PlayOneShot(SongClick);
 
         if (!IsCrteate)
         {

@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 velocity;
     private bool isGrounded;
-    private bool isRunning;
+   public static bool isRunning;
     private float lastStaminaUseTime;
     //private Vector3[] worldCorners = new Vector3[4];
     private Camera mainCamera;
