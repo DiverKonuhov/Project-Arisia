@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/ReadonlyTest.unity.meta
+guid: bd1cd5717f6df1c4188531c5c286ebc9
+========
+guid: a16d34d9f59c5304f9ff0f5779ddbfc0
+folderAsset: yes
+>>>>>>>> master:Assets/Prefabs/Castle.meta
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

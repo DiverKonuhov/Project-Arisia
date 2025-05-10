@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/Door.prefab.meta
+guid: 995443b27639a804897ce64bec988b2c
+========
 guid: 06e1a0ed97ae4dc7a0e8a71ce92a799b
+>>>>>>>> master:Assets/Prefabs/Castle/Statue/Knight_Statue_Sword.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/SpiderOlder.prefab.meta
+guid: 4eba643981fe7c74abfccf803647f4b4
+========
 guid: 7c7ae34f3b92417bb76bd2907d8f934d
+>>>>>>>> master:Assets/Prefabs/Castle/Statue/Knight_Statue_Shield.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Texture/Castle/Statue.meta
 guid: c84a9047c950471285f62bc2df154046
+========
+guid: 661d743fcad300740a4bc4d575698e40
+>>>>>>>> master:Assets/Models/castle.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

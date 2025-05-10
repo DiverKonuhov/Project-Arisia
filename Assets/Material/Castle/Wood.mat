@@ -12,6 +12,7 @@ Material:
   m_Parent: {fileID: 2100000, guid: fdf5fee4ab397f24099ce0e3b39dab31, type: 2}
   m_ModifiedSerializedProperties: 16
   m_ValidKeywords:
+  - _ALPHATEST_ON
   - _CLEARCOATMAP
   - _DETAIL_MULX2
   - _NORMALMAP
@@ -23,9 +24,9 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2450
   stringTagMap:
-    RenderType: Opaque
+    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
